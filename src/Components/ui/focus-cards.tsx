@@ -74,6 +74,7 @@ export function FocusCards({ cards }: { cards: CardData[] }) {
         {cards.map((card, index) => (
           <Card
             key={card.title}
+            
             card={card}
             index={index}
             hovered={hovered}
@@ -81,6 +82,7 @@ export function FocusCards({ cards }: { cards: CardData[] }) {
           />
         ))}
       </div>
+      
     </div>
   );
 }

@@ -18,7 +18,7 @@ export const MainHero: React.FC = () => {
         {/* --- PARTIE GAUCHE (4 colonnes sur 5) --- */}
         <div className="relative col-span-1 overflow-hidden rounded-md md:col-span-4">
           <Image
-            src="/Images/img1.png"
+            src=""
             alt="Table garnie de plats du restaurant AFOOD"
             fill
             className="object-cover"
@@ -32,7 +32,7 @@ export const MainHero: React.FC = () => {
             {/* Logo en haut à gauche */}
             <div className="self-start">
               {<Image
-                src="/Images/logo.png"
+                src=""
                 alt="Logo AFOOD"
                 width={100}
                 height={100}

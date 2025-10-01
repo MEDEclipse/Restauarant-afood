@@ -17,17 +17,17 @@ type PanelItem = {
 const panelItems: PanelItem[] = [
   {
     href: "https://d2tvomu9ndhyfk.cloudfront.net/",
-    imageUrl: '/Images/img3.png',
+    imageUrl: '',
     text: 'COMMANDER MAINTENANT',
   },
   {
     href: '#about',
-    imageUrl: '/Images/img2.png',
+    imageUrl: '',
     text: "L'UNIVERS AFOOD",
   },
   {
     href: '#restaurants',
-    imageUrl: '/Images/img3.png',
+    imageUrl: '',
     text: 'NOS RESTAURANTS',
   },
 ];

@@ -3,9 +3,9 @@ import { MainHero } from "../Components/MainHero";
 import { AboutSection } from "../Components/AboutSection";
 import {ContactBubbles} from "../Components/Contactbulle";
 import { CopyrightBar } from "../Components/CopyrightBar";
-import {InfiniteMovingCards} from "../Components/ui/infinite-moving-cards";
+//import {InfiniteMovingCards} from "../Components/ui/infinite-moving-cards";
 import { FocusCardsDemo } from "@/Components/focus-cards";
-import { testimonials } from "@/Components/Reviews";
+//import { testimonials } from "@/Components/Reviews";
 export default function Home() {
   return (
     
@@ -25,6 +25,7 @@ export default function Home() {
           alt="Footer Background"
           className="w-20 mt-10 mx-auto"
         />
+       
         <CopyrightBar />
       </div>
 
