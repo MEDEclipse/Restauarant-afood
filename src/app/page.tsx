@@ -21,7 +21,7 @@ export default function Home() {
        {/* <InfiniteMovingCards items={testimonials} />}*/}
         
         <img
-          src="/images/logo-byd.png"
+          src=""
           alt="Footer Background"
           className="w-20 mt-10 mx-auto"
         />
