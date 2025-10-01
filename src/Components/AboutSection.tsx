@@ -1,5 +1,3 @@
-// src/components/AboutSection.tsx
-
 "use client";
 
 import React from "react";
@@ -17,14 +15,14 @@ export function AboutSection() {
           <div className="relative h-[600px] md:h-[700px] lg:h-[800px] rounded-lg overflow-hidden shadow-xl">
             <Image
               src="" // Remplacez par votre image de plat
-              alt="L'univers AFOOD"
+              alt="L&apos;univers AFOOD"
               layout="fill"
               objectFit="cover"
               className="brightness-90"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-8">
               <h2 className="font-serif text-5xl md:text-6xl font-bold text-white tracking-tight">
-                L'UNIVERS AFOOD
+                L&apos;UNIVERS AFOOD
               </h2>
             </div>
           </div>
