@@ -8,13 +8,13 @@ const garamond = Cormorant_Garamond({ subsets: ['latin'], weight: ['300'] });
 
 export function AboutSection() {
   return (
-    <section className="relative w-full h-auto bg-black text-white py-16">
+    <section className="relative w-full h-auto  py-16">
       <div className="mx-auto max-w-7xl px-8 md:px-12 lg:px-16 xl:px-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8">
           {/* Bloc de Gauche: Image avec texte */}
           <div className="relative h-[600px] md:h-[700px] lg:h-[800px] rounded-lg overflow-hidden shadow-xl">
             <Image
-              src="" // Remplacez par votre image de plat
+              src="/1-2-1.png" // Remplacez par votre image de plat
               alt="L&apos;univers AFOOD"
               layout="fill"
               objectFit="cover"
@@ -42,7 +42,7 @@ export function AboutSection() {
               {/* Image d'illustration à droite du texte */}
               <div className="relative h-48 w-full mt-6 rounded-lg overflow-hidden shadow-md">
                 <Image
-                  src="" // Remplacez par votre image d'intérieur
+                  src="/1-9-afoodmenu.png" // Remplacez par votre image d'intérieur
                   alt="Intérieur du restaurant"
                   layout="fill"
                   objectFit="cover"
@@ -60,7 +60,7 @@ export function AboutSection() {
                     <Star key={i} size={20} fill="currentColor" className="text-yellow-500" />
                   ))}
                 </div>
-                <p className="text-sm font-semibold text-neutral-100">TRIP ADVISOR</p>
+                <p className="text-sm font-semibold text-neutral-100">TRIP ADVISOR CASABLANCA</p>
                 <p className="text-xs text-neutral-400">BEST STEAK HOUSE</p>
                 <p className="text-xs text-neutral-500">PRAGUE</p>
               </div>
@@ -91,15 +91,12 @@ export function AboutSection() {
             {/* Section NOTRE HISTOIRE */}
             <div className={`${garamond.className} bg-neutral-950 p-8 rounded-lg shadow-xl`}>
               <h3 className="text-xl font-bold tracking-wide text-neutral-400 mb-4 text-center">
-                <span className="text-neutral-600 mr-2">---</span> NOTRE HISTOIRE <span className="text-neutral-600 mr-2">---</span>
               </h3>
-              <p className="text-base leading-relaxed text-neutral-300 mb-6">
-                Founded with a passion for culinary excellence, Qitchen&apos;s journey began in the heart of Prague. Over years, it evolved into a haven for sushi enthusiasts, celebrated for its artful mastery and devotion to redefining gastronomy.
-              </p>
+              
               {/* Image de boisson */}
               <div className="relative h-60 w-full rounded-lg overflow-hidden shadow-md">
                 <Image
-                  src="" // Remplacez par votre image de boisson
+                  src="/5-afoodmenu.png" // Remplacez par votre image de boisson
                   alt="Boisson rafraîchissante"
                   layout="fill"
                   objectFit="cover"
@@ -108,9 +105,9 @@ export function AboutSection() {
               </div>
               {/* Catégories / tags sous l'image de boisson */}
               <div className="mt-6 flex gap-3 flex-wrap">
-                <span className="bg-neutral-800 text-neutral-300 text-xs px-3 py-1 rounded-full">Authentiques</span>
-                <span className="bg-neutral-800 text-neutral-300 text-xs px-3 py-1 rounded-full">Chaleureux</span>
-                <span className="bg-neutral-800 text-neutral-300 text-xs px-3 py-1 rounded-full">Gourmands</span>
+                <span className="bg-neutral-800 text-neutral-300 text-xs px-3 py-1 rounded-full">salades</span>
+                <span className="bg-neutral-800 text-neutral-300 text-xs px-3 py-1 rounded-full">burgers</span>
+                <span className="bg-neutral-800 text-neutral-300 text-xs px-3 py-1 rounded-full">pizza</span>
               </div>
             </div>
           </div>

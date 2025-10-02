@@ -11,15 +11,15 @@ import { SideInfoPanel } from './SideInfoPanel';
 
 export const MainHero: React.FC = () => {
   return (
-    <section className="min-h-screen bg-black p-4">
+    <section className="min-h-screen px-10 py-5">
       {/* Grille principale qui divise l'écran en 5 colonnes sur desktop */}
       <div className="grid h-[calc(100vh-2rem)] grid-cols-1 gap-4 md:grid-cols-5">
 
         {/* --- PARTIE GAUCHE (4 colonnes sur 5) --- */}
         <div className="relative col-span-1 overflow-hidden rounded-md md:col-span-4">
           <Image
-            src=""
-            alt="Table garnie de plats du restaurant AFOOD"
+            src="/1-9-afoodmenu.png"
+            alt="Table garnie de plats du restaurant AFOOD1-9-afoodmenu"
             fill
             className="object-cover"
             priority
@@ -32,8 +32,8 @@ export const MainHero: React.FC = () => {
             {/* Logo en haut à gauche */}
             <div className="self-start">
               {<Image
-                src=""
-                alt="Logo AFOOD"
+                src="/1-9-afoodmenu.png"
+                alt="Logo AFOOD1-9-afoodmenu"
                 width={100}
                 height={100}
               />}

@@ -67,7 +67,7 @@ export function FocusCards({ cards }: { cards: CardData[] }) {
 
   return (
     <div className="py-20">
-      <h2 className="text-center text-4xl font-bold font-serif text-white mb-12">
+      <h2 className="text-center text-4xl font-bold font-serif mb-12">
         Nos Restaurants
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-5xl mx-auto md:px-8 w-full">

@@ -1,41 +1,101 @@
-// src/data/reviews.tsx
+"use client";
 
-export const testimonials = [
+import React, { useEffect, useState } from "react";
+import { InfiniteMovingCards } from "@/Components/ui/infinite-moving-cards";
+
+export function  Comments() {
+  return (
+    <div className="h-[20rem] sm:h-[30rem] lg:h-[40rem] rounded-md flex flex-col antialiased bg-white dark:bg-black dark:bg-grid-white/[0.05] items-center justify-center relative overflow-hidden">
+      <InfiniteMovingCards
+        items={comments}
+        direction="right"
+        speed="slow"
+      />
+    </div>
+  );
+}
+const comments = [
   {
-    quote: "Une expérience culinaire inoubliable. Le service est impeccable et les plats sont d'une finesse rare. Je reviendrai !",
-    name: "Marie Dubois",
-    title: "Avis Google",
-    rating: 5,
+    quote: "Les plats sont savoureux et bien présentés, je recommande vivement !",
+    name: "Sofia Benali",
+    title: "Food",
   },
   {
-    quote: "Le meilleur couscous de Casablanca, sans hésiter. L'ambiance est chaleureuse et on se sent comme à la maison.",
-    name: "Karim Alami",
-    title: "Client fidèle",
-    rating: 5,
+    quote: "Un service rapide et chaleureux, on se sent vraiment bien accueilli.",
+    name: "Karim El Idrissi",
+    title: "Service",
   },
   {
-    quote: "Très belle découverte. Les saveurs sont authentiques et les produits de qualité. Une adresse à recommander.",
-    name: "Sophie Chen",
-    title: "Avis Google",
-    rating: 4,
+    quote: "Ambiance agréable et moderne, parfaite pour un dîner entre amis.",
+    name: "Nadia Ouarzazi",
+    title: "Restaurant",
   },
   {
-    quote: "Des plats savoureux et un service attentionné, je recommande vivement ce restaurant pour toute occasion.",
-    name: "Omar Benali",
-    title: "Habitué",
-    rating: 5,
+    quote: "Les desserts sont à tomber, surtout le tiramisu maison !",
+    name: "Yassine Bouzid",
+    title: "Food",
   },
   {
-    quote: "L'ambiance est parfaite et la cuisine est délicieuse. C'est mon restaurant préféré en ville !",
-    name: "Fatima Zahra",
-    title: "Client VIP",
-    rating: 5,
+    quote: "Un personnel attentif et souriant, c’est toujours un plaisir de venir.",
+    name: "Fatima Zahra Amrani",
+    title: "Service",
   },
   {
-    quote: "Le tagine était absolument divin. Un goût authentique que l'on ne trouve nulle part ailleurs.",
-    name: "Alexandre Petit",
-    title: "Touriste de passage",
-    rating: 5,
+    quote: "Le rapport qualité-prix est excellent, je reviendrai sans hésiter.",
+    name: "Omar Haddad",
+    title: "Restaurant",
+  },
+  {
+    quote: "J’ai adoré la variété de la carte, il y en a pour tous les goûts.",
+    name: "Imane Choukri",
+    title: "Food",
+  },
+  {
+    quote: "Très bonne expérience, l’équipe est aux petits soins avec les clients.",
+    name: "Hicham Laaroussi",
+    title: "Service",
+  },
+  {
+    quote: "Un cadre propre et agréable, parfait pour un déjeuner rapide.",
+    name: "Salma Kettani",
+    title: "Restaurant",
+  },
+  {
+    quote: "Les portions sont généreuses et les saveurs authentiques.",
+    name: "Rachid Oumansour",
+    title: "Food",
   },
 ];
 
+
+// const testimonials = [
+//   {
+//     quote:
+//       "It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair.",
+//     name: "Charles Dickens",
+//     title: "A Tale of Two Cities",
+//   },
+//   {
+//     quote:
+//       "To be, or not to be, that is the question: Whether 'tis nobler in the mind to suffer The slings and arrows of outrageous fortune, Or to take Arms against a Sea of troubles, And by opposing end them: to die, to sleep.",
+//     name: "William Shakespeare",
+//     title: "Hamlet",
+//   },
+//   {
+//     quote: "All that we see or seem is but a dream within a dream.",
+//     name: "Edgar Allan Poe",
+//     title: "A Dream Within a Dream",
+//   },
+//   {
+//     quote:
+//       "It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.",
+//     name: "Jane Austen",
+//     title: "Pride and Prejudice",
+//   },
+//   {
+//     quote:
+//       "Call me Ishmael. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world.",
+//     name: "Herman Melville",
+//     title: "Moby-Dick",
+//   },
+// ];
