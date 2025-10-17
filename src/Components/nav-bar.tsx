@@ -10,6 +10,7 @@ import {
   MobileNavToggle,
   MobileNavMenu,
 } from "@/Components/ui/resizable-navbar";
+import Link from "next/link";
 import { useState } from "react";
 
 export function NavbarComponent({ children }: { children: React.ReactNode }) {
@@ -45,8 +46,7 @@ export function NavbarComponent({ children }: { children: React.ReactNode }) {
               <NavItems items={navItems} />
               {!visible && (
                 <div className="flex items-center gap-4">
-                  <NavbarButton variant="secondary">contactez-nous</NavbarButton>
-                  <NavbarButton variant="primary">Commander maintenant</NavbarButton>
+                  <NavbarButton variant="primary"><Link href={"https://d2tvomu9ndhyfk.cloudfront.net"}>Commander maintenant</Link></NavbarButton>
                 </div>
               )}
             </>

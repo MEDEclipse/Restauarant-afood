@@ -8,6 +8,7 @@ import { FocusCardsDemo } from "@/Components/focus-cards";
 import ImagesFoodPresenation from "@/Components/imagesFoodPresenation";
 import { Comments } from "@/Components/Reviews";
 //import { testimonials } from "@/Components/Reviews";
+import { Hero47 } from "@/Components/hero";
 export default function Home() {
   return (
     
@@ -15,7 +16,17 @@ export default function Home() {
       
       {/* Contenu principal */}
       <div className="flex-1 relative">
-        
+      <Hero47 
+        heading="AFood - Restaurant Authentique Marocain"
+        subheading="Découvrez nos délicieux plats marocains traditionnels préparés avec passion"
+        description="AFood est un restaurant marocain authentique qui vous propose des plats traditionnels préparés avec des ingrédients frais et des recettes ancestrales. Commandez en ligne ou visitez-nous."
+        image={
+          {
+            src: "/commandapp.png",
+            alt: "AFood - Restaurant Marocain Authentique"
+          }
+        }
+      />
         <MainHero />
         <ContactBubbles />
         <AboutSection />
@@ -27,7 +38,7 @@ export default function Home() {
           className="w-20 mt-10 mx-auto"
         />
        
-        <CopyrightBar />
+       <CopyrightBar />
       </div>
 
       

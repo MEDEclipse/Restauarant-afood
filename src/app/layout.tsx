@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { NavbarComponent } from "@/Components/nav-bar";
-
+import { CopyrightBar } from "@/Components/CopyrightBar";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -59,7 +59,7 @@ export default function RootLayout({
         <NavbarComponent >
           {children}
         </NavbarComponent> 
-        
+
       </body>
     </html>
   );

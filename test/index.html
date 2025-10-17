@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="fr" data-layout="vertical" data-preloader="disable" data-sidebar="dark" data-sidebar-image="none" data-sidebar-size="lg" data-topbar="light">
+<head>
+  <meta charset="utf-8"/>
+  <title>ZinPage - Génération de pages produits en 1 clic</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="ZinPage - Générateur de pages produits IA"/>
+  <meta name="author" content="ZinPage"/>
+
+  <!-- =========================
+       TABLE DES MATIÈRES (TOC)
+       1) Favicon & PWA
+       2) CSS libs & Fonts
+       3) Layout config
+       4) Détection langue (auto redirect)
+       5) Styles globaux + Patch titres unifiés
+     ========================= -->
+
+  <!-- 1) Favicon -->
+  <link rel="shortcut icon" href="assets/images/favicon-32x32.png"/>
+
+  <!-- 1) PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#00c853">
+
+  <!-- 2) CSS libs -->
+  <link rel="stylesheet" href="assets/libs/swiper/swiper-bundle.min.css"/>
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="assets/css/icons.min.css"/>
+  <link rel="stylesheet" href="assets/css/app.min.css"/>
+  <link rel="stylesheet" href="assets/css/custom.min.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"/>
+
+  <!-- 2) Toastify (non bloquant) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+  <!-- 2) Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600&family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+
+  <!-- 3) Layout config -->
+  <script src="assets/js/layout.js"></script>
+
+  <!-- 4) Détection auto (si aucune langue choisie auparavant) -->
+  <script>
+    if (!localStorage.getItem('zinpageLangSelected')) {
+      const userLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+      if (userLang.startsWith('ar'))      window.location.href = '/ar/';
+      else if (userLang.startsWith('en')) window.location.href = '/en/';
+      // fr: rester
+    }
+  </script>
+
+  <!-- 5) Styles globaux -->
+  <style>
+    :root{
+      --bg-grad: radial-gradient(circle at 20% 20%, #0f0c29, #302b63, #24243e);
+      --accent: #00AEEF;
+    }
+
+    /* Masquer la barre de défilement (scroll actif) */
+    html, body { -ms-overflow-style: none; scrollbar-width: none; }
+    html::-webkit-scrollbar, body::-webkit-scrollbar { width:0; height:0; }
+
+    /* Navbar */
+    nav.navbar{ background: var(--bg-grad); color:#fff; }
+    .navbar-nav .nav-link{ color:#00a1e0 !important; }
+    .navbar-nav .nav-link:hover,
+    .navbar-nav .nav-link.active{ color:#ffffff !important; text-shadow:0 0 5px #00a1e0; }
+
+    /* Légère augmentation de largeur navbar */
+    @media (min-width: 1200px) {
+      .navbar .container { max-width: 1250px; }
+    }
+
+    /* Boutons navbar */
+    .navbar .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      height: 44px;
+      padding: 0 18px;
+      font-weight: 600;
+    }
+
+    /* Dropdown langues */
+    .lang-switch .dropdown-menu{
+      background:#1a1d2e;
+      border:1px solid rgba(255,255,255,0.12);
+      border-radius:12px; padding:6px;
+    }
+    .lang-switch .dropdown-item{
+      color:#e8eaf6; border-radius:8px;
+      display:flex; align-items:center; gap:.5rem;
+    }
+    .lang-switch .dropdown-item:hover{
+      background: rgba(0,174,239,0.12); color:#fff;
+    }
+
+    /* Logo responsive (SVG) */
+    .card-logo{
+      display:block; height:auto;
+      max-height: 90px;
+      width: clamp(160px, 18vw, 240px);
+    }
+
+    /* Section Hero + effets IA */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      background: var(--bg-grad);
+      color: #fff;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      padding: 80px 0;
+    }
+    #hero::before {
+      content: "";
+      position: absolute;
+      top: -20%;
+      left: -20%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(60deg, rgba(0,174,239,0.1), rgba(255,255,255,0.05));
+      animation: moveGlow 12s infinite linear;
+      z-index: 0;
+    }
+    @keyframes moveGlow { 0% { transform: rotate(0);} 100% { transform: rotate(360deg);} }
+
+    /* Canvases d'effets */
+    #aiDustFx, #hourglassFx {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 0;
+    }
+    #aiDustFx { opacity: .92; mix-blend-mode: screen; }
+    #hourglassFx { opacity: .33; filter: blur(.2px); mix-blend-mode: screen; }
+
+    /* Titre du Hero */
+    #hero h1 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: clamp(2.2rem, 4vw, 3rem);
+      line-height: 1.3;
+      color: #ddd;
+      position: relative;
+      z-index: 2;
+      max-width: 1000px;
+      margin: 0 auto 20px auto;
+    }
+    #hero p {
+      font-family: 'Poppins', sans-serif;
+      color: #bbb;
+      font-size: clamp(1rem, 1.5vw, 1.2rem);
+      max-width: 900px;
+      margin: 0 auto 30px auto;
+      line-height: 1.6;
+      z-index: 1;
+    }
+    #hero .btn {
+      background: #00AEEF; border: none; border-radius: 30px;
+      padding: 14px 30px; color: #fff; font-weight: 600; font-size: 1rem;
+      box-shadow: 0 0 15px #00AEEF; transition: .3s ease; z-index: 1;
+    }
+    #hero .btn:hover { box-shadow: 0 0 30px #00AEEF; transform: scale(1.05); }
+
+    /* Sections fond sombre */
+    .section-dark {
+      background: var(--bg-grad); color: #fff; position: relative; overflow: hidden;
+    }
+    .section-dark::before {
+      content: ""; position: absolute; top: -20%; left: -20%;
+      width: 200%; height: 200%;
+      background: linear-gradient(60deg, rgba(0,174,239,0.1), rgba(255,255,255,0.05));
+      animation: moveGlow 12s infinite linear; z-index: 0;
+    }
+
+    /* Services */
+    #services{ padding:150px 0; }
+    #services h1{ font-family:'Orbitron', sans-serif; color:var(--accent); margin-bottom:50px; }
+    #services p{ color:#d0d0d0; }
+    #services .cardish{
+      background:#1a1d2e; padding:30px; border-radius:12px; margin-bottom:80px;
+      transition:.3s ease; box-shadow:0 0 10px rgba(0,174,239,0.2);
+    }
+    #services .cardish:hover{ transform:translateY(-10px); box-shadow:0 0 20px rgba(0,174,239,0.4); }
+
+    /* Features */
+    #features{ padding:150px 0; }
+
+    /* ===== Plans (espacements + look) ===== */
+    #plans { padding: 90px 0; }
+    #plans h3 { margin-bottom: 16px; }
+    #plans p.title { margin-top: 3px; margin-bottom: 26px; }
+    #plans .card {
+      background: #1a1d2e; border-radius: 15px; transition: .3s ease;
+      box-shadow: 0 0 10px rgba(0,174,239,0.1); position: relative;
+    }
+    #plans .card:hover { transform: translateY(-10px); box-shadow: 0 0 25px rgba(0,174,239,0.5); }
+    #plans h3, #plans p.title { color: var(--accent); }
+    #plans .text-muted { color: #d0d0d0 !important; }
+    .badge-popular {
+      position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+      background-color: var(--accent); color: #fff; padding: 5px 12px; border-radius: 20px;
+      font-size: .8rem; font-weight: 600;
+    }
+
+    /* ====== PLANS (alignements & visibilité) ====== */
+    #plans .plans-row { align-items: stretch; }
+    #plans .plan-box {
+      background: #1a1d2e;
+      border: 1px solid rgba(255,255,255,0.12) !important;
+      border-radius: 15px; box-shadow: 0 0 10px rgba(0,174,239,0.12);
+      display: flex; flex-direction: column; min-height: 560px;
+      padding: 60px 40px 40px !important; transition: transform .3s ease, box-shadow .3s ease;
+      position: relative;
+    }
+    #plans .plan-box:hover { transform: translateY(-6px); box-shadow: 0 0 22px rgba(0,174,239,0.28); }
+    #plans .badge-popular {
+      background-color: #00AEEF; color: #fff; position: absolute;
+      top: -12px; left: 50%; transform: translateX(-50%);
+      padding: 6px 12px; border-radius: 999px; font-size: .78rem; font-weight: 700;
+      box-shadow: 0 0 12px rgba(0,174,239,0.45); z-index: 2;
+    }
+    #plans .plan-top{ margin-top:-8px; margin-bottom:12px; }
+    #plans .plan-top i{ opacity:.95; }
+    #plans .price-wrap{
+      display:flex; align-items:flex-end; justify-content:center; gap:8px; margin-bottom:12px;
+    }
+    #plans .price-currency{ font-size:1.35rem; color:#e8f6ff; opacity:.95; }
+    #plans .price-amount{
+      font-size:3rem; font-weight:900; line-height:1; color:#ffffff;
+      text-shadow:0 0 16px rgba(0,174,239,0.35); letter-spacing:.2px;
+    }
+    #plans .price-period{ font-size:1rem; color:#e0f2ff; opacity:.9; }
+    #plans .plan-features{
+      text-align:left; margin-top:14px; margin-bottom:18px; color:#bcd2e6; line-height:1.45; flex:1;
+    }
+    #plans .plan-features li{ margin-bottom:6px; }
+    #plans .plan-box .btn{ border-radius:999px; margin-top:auto; }
+    #plans .plans-row > [class*="col-"] { display:flex; }
+    #plans .plans-row > [class*="col-"] > .plan-box { width:100%; }
+
+    /* Accordion sombre – FAQ */
+    .accordion-dark .accordion-item{
+      background:#1a1d2e; border:1px solid rgba(255,255,255,0.12); border-radius:12px; margin-bottom:14px;
+      box-shadow:0 0 10px rgba(0,174,239,0.12);
+    }
+    .accordion-dark .accordion-item:first-of-type,
+    .accordion-dark .accordion-item:last-of-type{ border-radius:12px; }
+    .accordion-dark .accordion-button{
+      background:transparent; color:#e8f6ff; font-weight:600; box-shadow:none; border-radius:12px;
+    }
+    .accordion-dark .accordion-button:not(.collapsed){
+      color:#fff; background:rgba(0,174,239,0.08); border-bottom:1px solid rgba(255,255,255,0.12);
+    }
+    .accordion-dark .accordion-button:focus{ box-shadow:none; }
+    .accordion-dark .accordion-body{ color:#d0dbe8; padding:14px 16px 18px; }
+
+    /* ===== Stats défilantes (marquee) ===== */
+    #stats.section-dark { padding: 96px 0; }
+    #stats h5 { color: #eaf8ff; letter-spacing:.3px; }
+    .stats-rail {
+      position: relative;
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,.95) 6%, rgba(0,0,0,.95) 94%, transparent 100%);
+              mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,.95) 6%, rgba(0,0,0,.95) 94%, transparent 100%);
+    }
+    .stats-marquee .swiper-wrapper{ transition-timing-function: linear !important; }
+    .stats-marquee .swiper-slide{ width: auto; display:flex; align-items:center; justify-content:center; }
+    .stat-pill {
+      display:inline-flex; align-items:center; gap:10px;
+      padding: 12px 18px; border-radius: 999px;
+      background: rgba(0, 174, 239, 0.10);
+      border: 1px solid rgba(0, 174, 239, 0.28);
+      color: #e6f7ff; font-weight: 700; font-size: 0.98rem; letter-spacing: .2px;
+      box-shadow: 0 0 18px rgba(0,174,239,0.18); white-space: nowrap;
+      backdrop-filter: blur(2px);
+      transition: transform .2s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+    }
+    .stat-pill::before{
+      content:""; width:8px; height:8px; border-radius:50%;
+      background:#00AEEF; box-shadow:0 0 12px #00AEEF;
+    }
+    .stat-pill:hover{ transform: translateY(-2px); background: rgba(0,174,239,0.16); border-color: rgba(0,174,239,0.5); box-shadow: 0 0 28px rgba(0,174,239,0.35); }
+
+    /* ===== Footer ===== */
+    #footer a.text-white.text-decoration-none:hover { text-decoration: underline; }
+
+    /* ========== RESPONSIVE GLOBAL ========== */
+    @media (max-width: 1200px){
+      .navbar .container { max-width: 100%; }
+    }
+
+    /* <= 992px (tablette & mobile paysage) */
+    @media (max-width: 992px){
+      .card-logo { width: clamp(140px, 26vw, 200px); }
+      .navbar .btn { height: 42px; padding: 0 14px; }
+      #hero { min-height: 80vh; padding: 64px 0; }
+      .section-dark { padding: 72px 0 !important; }
+      #features .col-lg-6 + .col-lg-6, #features .col-lg-5 + .col-lg-6 { margin-top: 28px; }
+      #features img { width: 100%; height: auto; object-fit: contain; }
+      #plans { padding: 80px 0 !important; }
+      #plans .plan-box { min-height: auto; padding: 48px 28px !important; }
+      #plans .price-amount { font-size: 2.4rem; }
+      #plans .badge-popular { top: -10px; }
+      .accordion-dark .accordion-item { margin-bottom: 12px; }
+      .accordion-dark .accordion-button { padding: 14px 16px; }
+      .stat-pill { padding: 10px 14px; font-size: .92rem; gap: 8px; }
+    }
+
+    /* <= 768px (mobile portrait) */
+    @media (max-width: 768px){
+      .navbar .d-flex.gap-2 > .btn { padding: 10px 16px; height: 40px; }
+      .lang-switch .btn { height: 40px; padding: 0 12px; }
+      #hero { padding: 56px 0; }
+      #hero h1 { font-size: clamp(1.7rem, 6vw, 2rem); }
+      #hero p { max-width: 92%; margin-left: auto; margin-right: auto; }
+      #aiDustFx { opacity: .65; }
+      #hourglassFx { opacity: .25; filter: blur(.3px); }
+      .section-dark .container { padding-left: 16px; padding-right: 16px; }
+      #features .text-muted-on-dark { text-align: left; }
+      #features h3 { font-size: 1.15rem; }
+      #plans .price-amount { font-size: 2.1rem; }
+      #plans .plan-features { font-size: .95rem; line-height: 1.5; }
+      #plans .plan-box .btn { width: 100%; }
+      .accordion-dark .accordion-body { font-size: .98rem; }
+      #footer p, #footer a { font-size: .95rem; }
+    }
+
+    /* <= 576px (petits smartphones) */
+    @media (max-width: 576px){
+      #hero { min-height: auto; padding: 48px 0; }
+      #hero .btn { width: 100%; max-width: 320px; }
+      #features img { max-height: 360px; object-fit: cover; border-radius: 12px; }
+      #plans { padding: 72px 0 !important; }
+      #plans .plan-box { padding: 40px 22px !important; }
+      #plans .plan-top i { font-size: 2.2rem; }
+      #plans .price-amount { font-size: 1.9rem; }
+      #plans .plan-features { font-size: .94rem; }
+      .badge-popular { top: -8px; font-size: .74rem; padding: 4px 10px; }
+      .accordion-dark .accordion-button { font-size: 1rem; }
+      .accordion-dark .accordion-body { font-size: .95rem; }
+      .landing-back-top { bottom: 18px; right: 18px; }
+    }
+
+    /* Très petits appareils */
+    @media (max-width: 380px){
+      #hero h1 { font-size: 1.45rem; }
+      #features img { max-height: 300px; }
+      #plans .price-amount { font-size: 1.7rem; }
+    }
+
+    .text-muted-on-dark{ color:#d0d0d0 !important; }
+  </style>
+
+  <!-- 5) Patch titres unifiés -->
+  <style>
+/* === PATCH TITRES UNIFIÉS (même style que Plans/FAQ) === */
+#features h3,           /* Pourquoi choisir ZinPage ? */
+#services h1,           /* Fonctionnalités clés de ZinPage */
+#stats h5,              /* ZinPage en quelques chiffres */
+#how-it-works h3        /* Comment ça marche ? */
+{
+  font-family: 'Poppins', sans-serif !important;
+  font-weight: 700 !important;                  /* fw-bold */
+  color: var(--accent) !important;              /* même couleur que Plans/FAQ */
+  font-size: clamp(1.6rem, 2.2vw, 2rem) !important; /* gabarit proche du h3 des Plans */
+  line-height: 1.25 !important;
+  letter-spacing: .2px !important;
+  margin-bottom: .5rem !important;              /* cohérent avec le spacing des Plans */
+}
+
+/* Optionnel : si tu veux un léger sous-titre cohérent partout
+#features .text-muted-on-dark,
+#services .text-muted-on-dark,
+#how-it-works .text-muted-on-dark {
+  color: #d0d0d0 !important;
+}
+*/
+</style>
+
+</head>
+
+<body data-bs-spy="scroll" data-bs-target="#navbar-example">
+  <div class="layout-wrapper landing">
+
+    <!-- =========================
+         SECTION: Navbar
+       ========================= -->
+    <nav class="navbar navbar-expand-lg navbar-landing px-3" id="navbar">
+      <div class="container px-3">
+
+        <!-- Logo -->
+        <a class="navbar-brand" href="/dashbord/dashbord.html">
+          <img src="assets/images/zinpage-logo.svg" alt="ZinPage Logo" class="card-logo"/>
+        </a>
+
+        <!-- Burger menu -->
+        <button class="navbar-toggler py-0 fs-20 text-body" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <i class="mdi mdi-menu"></i>
+        </button>
+
+        <!-- Menu + Actions -->
+        <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
+          
+          <!-- Menu central -->
+          <ul class="navbar-nav mx-auto mt-2 mt-lg-0" id="navbar-example">
+            <li class="nav-item"><a class="nav-link" href="#hero">Accueil</a></li>
+            <li class="nav-item"><a class="nav-link" href="#services">Fonctionnalités</a></li>
+            <li class="nav-item"><a class="nav-link" href="#features">Pourquoi ZinPage ?</a></li>
+            <li class="nav-item"><a class="nav-link" href="#plans">Tarifs</a></li>
+            <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
+          </ul>
+
+          <!-- Zone droite -->
+          <div class="d-flex align-items-center gap-2">
+            <a href="auth.html" class="btn btn-primary">Connexion</a>
+            <a class="btn btn-primary" href="auth.html">Essayer maintenant</a>
+
+            <!-- Sélecteur langue -->
+            <div class="dropdown lang-switch">
+              <button id="langSwitchBtn" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Changer de langue"
+                      class="btn btn-primary d-inline-flex align-items-center">
+                <span id="langFlag"
+                      style="display:inline-flex; align-items:center; width:20px; height:14px; margin-right:6px; border-radius:2px; overflow:hidden;">
+                  <!-- Drapeau FR par défaut -->
+                  <svg width="20" height="14" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="1" height="2" fill="#0055A4"/>
+                    <rect width="1" height="2" x="1" fill="#FFFFFF"/>
+                    <rect width="1" height="2" x="2" fill="#EF4135"/>
+                  </svg>
+                </span>
+                <span id="langLabel">FR</span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><button class="dropdown-item" data-lang="fr">🇫🇷 Français</button></li>
+                <li><button class="dropdown-item" data-lang="ar">🇲🇦 العربية</button></li>
+                <li><button class="dropdown-item" data-lang="en">🇬🇧 English</button></li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </nav>
+    <!-- /SECTION: Navbar -->
+
+    <div class="vertical-overlay" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent.show"></div>
+
+    <!-- =========================
+         SECTION: Hero
+       ========================= -->
+    <section id="hero" class="hero-section">
+      <canvas id="aiDustFx" aria-hidden="true"></canvas>
+      <canvas id="hourglassFx" aria-hidden="true"></canvas>
+
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-10 mx-auto">
+            <h1 class="display-5 fw-bold">"La solution clé en main pour accélérer vos ventes COD avec des pages ultra-rapides prêtes à convertir."</h1>
+            <p class="lead text-muted-on-dark">Multilingue, intuitif et sans compétence : la solution idéale pour chaque e-commerçant.</p>
+            <div class="d-flex justify-content-center mt-4">
+              <a class="btn btn-primary" href="auth.html">Lancer ma démo gratuite maintenant</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- /SECTION: Hero -->
+
+    <!-- =========================
+         SECTION: How it works
+       ========================= -->
+    <section id="how-it-works" class="section section-dark">
+      <div class="container">
+        <div class="text-center mb-5">
+          <h3 class="fw-bold">Comment ça marche ?</h3>
+          <p class="text-muted-on-dark">En 3 étapes simples, votre page produit est prête.</p>
+        </div>
+        <div class="row text-center">
+          <div class="col-md-4">
+            <div class="mb-4">
+              <div class="avatar-sm icon-effect mx-auto mb-3">
+                <div class="avatar-title bg-transparent rounded-circle text-primary h1"><i class="ri-link"></i></div>
+              </div>
+              <h5>1. Entrez un lien produit</h5>
+              <p class="text-muted-on-dark">Collez simplement le lien de votre produit Aliexpress.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <div class="avatar-sm icon-effect mx-auto mb-3">
+                <div class="avatar-title bg-transparent rounded-circle text-success h1"><i class="ri-brain-line"></i></div>
+              </div>
+              <h5>2. ZinPage génère la page</h5>
+              <p class="text-muted-on-dark">Notre IA analyse votre produit, rédige des textes persuasifs, structure la page et crée un design qui vend, en arabe, français ou anglais.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <div class="avatar-sm icon-effect mx-auto mb-3">
+                <div class="avatar-title bg-transparent rounded-circle text-warning h1"><i class="ri-send-plane-line"></i></div>
+              </div>
+              <h5>3. Page prête à convertir</h5>
+              <p class="text-muted-on-dark">Vous obtenez un lien clé en main, prêt à être utilisé directement dans vos publicités pour commencer à vendre immédiatement.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- /SECTION: How it works -->
+
+    <!-- =========================
+         SECTION: Stats défilantes
+       ========================= -->
+    <section id="stats" class="section section-dark">
+      <div class="container">
+        <div class="text-center">
+          <h5 class="fs-20">ZinPage en quelques chiffres</h5>
+          <div class="stats-rail">
+            <div class="swiper stats-marquee mt-4" dir="ltr">
+              <div class="swiper-wrapper">
+                <div class="swiper-slide"><span class="stat-pill">Création &lt; 2m</span></div>
+                <div class="swiper-slide"><span class="stat-pill">3 langues FR/AR/EN</span></div>
+                <div class="swiper-slide"><span class="stat-pill">0% code requis</span></div>
+                <div class="swiper-slide"><span class="stat-pill">Notifications commandes</span></div>
+                <div class="swiper-slide"><span class="stat-pill">Intégration Google Sheets</span></div>
+                <div class="swiper-slide"><span class="stat-pill">Lien clé en main</span></div>
+                <div class="swiper-slide"><span class="stat-pill">Tracking visiteurs</span></div>
+                <div class="swiper-slide"><span class="stat-pill">Pixels Meta/TikTok/Google</span></div>
+                <!-- Dupliqués -->
+                <div class="swiper-slide"><span class="stat-pill">Création &lt; 2m</span></div>
+                <div class="swiper-slide"><span class="stat-pill">3 langues FR/AR/EN</span></div>
+                <div class="swiper-slide"><span class="stat-pill">0% code requis</span></div>
+                <div class="swiper-slide"><span class="stat-pill">100% prêt pub</span></div>
+                <div class="swiper-slide"><span class="stat-pill">Notifications commandes</span></div>
+                <div class="swiper-slide"><span class="stat-pill">Lien clé en main</span></div>
+                <div class="swiper-slide"><span class="stat-pill">Tracking visiteurs</span></div>
+                <div class="swiper-slide"><span class="stat-pill">Pixels Meta/TikTok/Google</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- /SECTION: Stats défilantes -->
+
+    <!-- =========================
+         SECTION: Services
+       ========================= -->
+    <section id="services" class="section section-dark">
+      <!-- (contenu Services déjà ajusté plus haut dans nos échanges) -->
+      <div class="container">
+        <div class="row g-5">
+          <div class="col-12">
+            <div class="text-center mb-5">
+              <h1 class="mb-3">Fonctionnalités clés de ZinPage</h1>
+              <p class="text-muted-on-dark">Pensé pour les e-commerçants COD qui veulent lancer vite et convertir plus.</p>
+            </div>
+          </div>
+
+          <!-- 1) Génération rapide -->
+          <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="cardish text-center px-4 py-5">
+              <i class="ri-timer-flash-line fs-1 text-primary mb-3"></i>
+              <h5 class="mt-3">Génération &lt; 2 minutes</h5>
+              <p class="text-muted-on-dark mb-3">À partir d’un simple lien AliExpress, obtenez une page complète sans aucune compétence technique.</p>
+              <ul class="list-unstyled text-muted-on-dark small">
+                <li>⚡ Création rapide</li>
+                <li>🔗 Coller l’URL produit</li>
+                <li>🧩 Structure prête à convertir</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 2) Formulaire COD -->
+          <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="cardish text-center px-4 py-5">
+              <i class="ri-file-list-3-line fs-1 text-success mb-3"></i>
+              <h5 class="mt-3">Formulaire COD intégré</h5>
+              <p class="text-muted-on-dark mb-3">Collectez nom, téléphone, ville, tailles… et suivez tout dans Google Sheets.</p>
+              <ul class="list-unstyled text-muted-on-dark small">
+                <li>🧾 Champs personnalisables</li>
+                <li>📄 Envoi vers Google Sheets</li>
+                <li>🔒 Stockage sécurisé</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 3) Tracking & Pixels -->
+          <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="cardish text-center px-4 py-5">
+              <i class="ri-bar-chart-line fs-1 text-warning mb-3"></i>
+              <h5 class="mt-3">Tracking & Pixels publicitaires</h5>
+              <p class="text-muted-on-dark mb-3">Mesurez, optimisez et scalez : stats visiteurs + Meta/TikTok/Google.</p>
+              <ul class="list-unstyled text-muted-on-dark small">
+                <li>📊 Stats en temps réel</li>
+                <li>🧠 Pixels prêts à l’emploi</li>
+                <li>🎯 Optimisation des campagnes</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 4) Notifications commandes -->
+          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="400">
+            <div class="cardish text-center px-4 py-5">
+              <i class="ri-notification-3-line fs-1 text-info mb-3"></i>
+              <h5 class="mt-3">Notifications commandes en temps réel</h5>
+              <p class="text-muted-on-dark mb-3">
+                Soyez informé instantanément à chaque nouvelle commande pour réagir sans délai et augmenter vos chances de conversion.
+              </p>
+              <ul class="list-unstyled text-muted-on-dark small">
+                <li>📱 Notification mobile instantanée</li>
+                <li>📩 Alertes push web</li>
+                <li>⏱️ Réponse rapide = plus de ventes</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 5) Prêt pour la publicité -->
+          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="500">
+            <div class="cardish text-center px-4 py-5">
+              <i class="ri-megaphone-line fs-1 text-danger mb-3"></i>
+              <h5 class="mt-3">Pages prêtes pour la publicité</h5>
+              <p class="text-muted-on-dark mb-3">Recevez un lien clé en main, à insérer directement dans vos pubs Facebook, TikTok, Instagram.</p>
+              <ul class="list-unstyled text-muted-on-dark small">
+                <li>🔗 Lien immédiat & partageable</li>
+                <li>🚀 Optimisée conversion</li>
+                <li>🛠️ Compatible avec vos campagnes</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+    <!-- /SECTION: Services -->
+
+    <!-- =========================
+         SECTION: Features (Pourquoi)
+       ========================= -->
+    <section id="features" class="section section-dark">
+      <div class="container">
+        <div class="row align-items-center gy-4">
+          <div class="col-lg-5">
+            <div class="text-muted-on-dark">
+              <div class="avatar-sm icon-effect mb-4">
+                <div class="avatar-title bg-transparent rounded-circle text-success h1">
+                  <i class="ri-tools-line fs-36"></i>
+                </div>
+              </div>
+              <h3 class="mb-3 fs-20">Pourquoi choisir ZinPage ?</h3>
+              <p class="mb-4 fs-16">
+                ZinPage vous permet de créer des pages produits optimisées en un temps record, prêtes à convertir et pensées pour le COD.
+                Conçu pour être simple, rapide et efficace, même pour les débutants.
+              </p>
+              <ul class="list-unstyled text-muted-on-dark">
+                <li class="mb-2"><i class="ri-rocket-line me-2"></i>Création en moins de 2 minutes</li>
+                <li class="mb-2"><i class="ri-check-double-line me-2"></i>Pages prêtes à être utilisées dans vos publicités</li>
+                <li class="mb-2"><i class="ri-lightbulb-flash-line me-2"></i>Optimisation IA pour booster vos conversions</li>
+                <li class="mb-2"><i class="ri-notification-3-line me-2"></i>Notifications commandes en temps réel</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-6 col-sm-7 mx-auto">
+            <!-- NOTE: tu as indiqué avoir un JPEG — j'utilise .jpeg ici -->
+            <img src="assets/images/landing/features/img-4.png"
+                 class="img-fluid mx-auto rounded shadow"
+                 alt="Notifications commandes ZinPage"/>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- /SECTION: Features (Pourquoi) -->
+
+    <!-- =========================
+         SECTION: Plans
+       ========================= -->
+<section id="plans" class="section section-dark">
+  <div class="container">
+    <div class="text-center mb-4">
+      <h3 class="fw-bold mb-2">Choisissez votre plan ZinPage</h3>
+      <p class="text-muted-on-dark mb-2">Tarifs mensuels, simples et transparents.</p>
+    </div>
+
+    <div class="row g-4 plans-row">
+      <!-- Starter -->
+      <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="100">
+        <div class="card plan-box text-center position-relative">
+          <div class="plan-top">
+            <i class="ri-flashlight-line text-primary display-5 mb-2"></i>
+            <h5 class="fw-semibold mb-1">Starter</h5>
+          </div>
+
+          <div class="price-wrap">
+            <span class="price-amount">39</span>
+            <span class="price-currency">$</span>
+            <span class="price-period">/mois</span>
+          </div>
+
+          <ul class="list-unstyled plan-features">
+            <li>✅ 50 pages produits</li>
+            <li>✅ 1000 commandes formulaire</li>
+            <li>✅ Pixel intégré</li>
+            <li>✅ Bouton WhatsApp intégré</li>
+            <li>✅ Notifications commandes en temps réel</li>
+            <li>✅ Google Sheets</li>
+            <li>✅ Tracking visiteurs (15&nbsp;000 visites / mois)</li>
+            <li>✅ Support clients flexible et disponible</li>
+            <li>✅ Version multilingue</li>
+            <li>✅ Sécurité API et données protégées</li>
+            <li>✅ Statistiques avancées</li>
+            <li>❌ Pages illimitées</li>
+            <li>❌ Commandes illimitées</li>
+            <li>❌ Tracking illimité</li>
+          </ul>
+
+          <a class="btn btn-primary w-100 fw-bold" 
+             href="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-9HK15483DE514742CNCRYEFI" 
+             target="_blank" rel="noopener">S’abonner</a>
+        </div>
+      </div>
+
+      <!-- Premium -->
+      <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="200">
+        <div class="card plan-box text-center position-relative">
+          <div class="badge-popular">Le plus populaire</div>
+          <div class="plan-top">
+            <i class="ri-vip-diamond-line text-warning display-5 mb-2"></i>
+            <h5 class="fw-semibold mb-1">Premium</h5>
+          </div>
+
+          <div class="price-wrap">
+            <span class="price-amount">59</span>
+            <span class="price-currency">$</span>
+            <span class="price-period">/mois</span>
+          </div>
+
+          <ul class="list-unstyled plan-features">
+            <li>✅ 200 pages produits</li>
+            <li>✅ 5&nbsp;000 commandes formulaire</li>
+            <li>✅ 3 choix Pixel intégré</li>
+            <li>✅ Bouton WhatsApp intégré</li>
+            <li>✅ Notifications commandes en temps réel</li>
+            <li>✅ Google Sheets</li>
+            <li>✅ Tracking visiteurs (50&nbsp;000 visites / mois)</li>
+            <li>✅ Support clients flexible et disponible</li>
+            <li>✅ Version multilingue</li>
+            <li>✅ Sécurité API et données protégées</li>
+            <li>✅ Statistiques avancées</li>
+            <li>❌ Pages illimitées</li>
+            <li>❌ Commandes illimitées</li>
+            <li>❌ Tracking illimité</li>
+          </ul>
+
+          <a class="btn btn-primary w-100 fw-bold" 
+             href="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-2NG56587C41822437NCRYD2A" 
+             target="_blank" rel="noopener">S’abonner</a>
+        </div>
+      </div>
+
+      <!-- Business -->
+      <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="300">
+        <div class="card plan-box text-center position-relative">
+          <div class="plan-top">
+            <i class="ri-trophy-line text-success display-5 mb-2"></i>
+            <h5 class="fw-semibold mb-1">Business</h5>
+          </div>
+
+          <div class="price-wrap">
+            <span class="price-amount">79</span>
+            <span class="price-currency">$</span>
+            <span class="price-period">/mois</span>
+          </div>
+
+          <ul class="list-unstyled plan-features">
+            <li>✅ Pages illimitées</li>
+            <li>✅ Commandes illimitées</li>
+            <li>✅ Visites illimitées</li>
+            <li>✅ Pixels illimités</li>
+            <li>✅ Statistiques avancées & tracking</li>
+            <li>✅ Bouton WhatsApp intégré</li>
+            <li>✅ Notifications commandes en temps réel</li>
+            <li>✅ Google Sheets</li>
+            <li>✅ Support clients VIP</li>
+            <li>✅ Version multilingue</li>
+            <li>✅ Sécurité API et données protégées</li>
+          </ul>
+
+          <a class="btn btn-primary w-100 fw-bold" 
+             href="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-5G951072M4369051JNCRYCLA" 
+             target="_blank" rel="noopener">S’abonner</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+    <!-- /SECTION: Plans -->
+
+    <!-- =========================
+         SECTION: FAQ
+       ========================= -->
+    <section id="faq" class="section section-dark">
+      <div class="container">
+        <div class="text-center mb-5">
+          <h3 class="fw-bold" style="color: var(--accent);">Questions fréquentes</h3>
+          <p class="text-muted-on-dark">Tout ce que vous devez savoir avant de commencer avec ZinPage.</p>
+        </div>
+
+        <div class="row justify-content-center">
+          <div class="col-lg-10">
+            <div class="accordion accordion-flush accordion-dark" id="faqAccordion">
+
+              <!-- Q1 -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="faq-heading-1">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#faq-collapse-1" aria-expanded="false" aria-controls="faq-collapse-1">
+                    <i class="ri-flashlight-line me-2 text-primary"></i>
+                    Comment créer une page à partir d’un lien AliExpress ?
+                  </button>
+                </h2>
+                <div id="faq-collapse-1" class="accordion-collapse collapse" aria-labelledby="faq-heading-1" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    Collez l’URL de votre produit AliExpress, choisissez la langue (FR/AR/EN) puis validez.
+                    En <strong>moins de 2 minutes</strong>, ZinPage génère une page complète : textes persuasifs, mise en page,
+                    formulaire COD et lien prêt pour vos publicités.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Q2 -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="faq-heading-2">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#faq-collapse-2" aria-expanded="false" aria-controls="faq-collapse-2">
+                    <i class="ri-notification-3-line me-2 text-info"></i>
+                    Comment sont gérées les commandes et les notifications ?
+                  </button>
+                </h2>
+                <div id="faq-collapse-2" class="accordion-collapse collapse" aria-labelledby="faq-heading-2" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    Chaque commande passe par le <strong>formulaire COD intégré</strong>.
+                    Vous recevez des <strong>notifications en temps réel</strong> (Push Pc/Mobile),
+                    et toutes les commandes peuvent être <strong>envoyées dans Google Sheets</strong>
+                    pour votre suivi et votre traitement.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Q3 -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="faq-heading-3">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#faq-collapse-3" aria-expanded="false" aria-controls="faq-collapse-3">
+                    <i class="ri-bar-chart-line me-2 text-warning"></i>
+                    Pixels & tracking : qu’est-ce qui est intégré ?
+                  </button>
+                </h2>
+                <div id="faq-collapse-3" class="accordion-collapse collapse" aria-labelledby="faq-heading-3" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    Les pages sont prêtes pour le <strong>tracking visiteurs</strong> et
+                    l’intégration des <strong>pixels publicitaires</strong> (Meta, TikTok, Google).
+                    Vous pouvez ensuite analyser vos performances depuis votre dashboard et optimiser vos campagnes.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Q4 -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="faq-heading-4">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                          data-bs-target="#faq-collapse-4" aria-expanded="false" aria-controls="faq-collapse-4">
+                    <i class="ri-shield-check-line me-2 text-success"></i>
+                    Mes données sont-elles sécurisées ? Puis-je modifier la page ?
+                  </button>
+                </h2>
+                <div id="faq-collapse-4" class="accordion-collapse collapse" aria-labelledby="faq-heading-4" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">
+                    Oui. ZinPage applique une <strong>sécurité API</strong> et protège vos données et commandes.
+                    Vos pages sont ensuite <strong>100% modifiables</strong> dans le tableau de bord
+                    (textes, images, sections, formulaire COD, pixels…).
+                  </div>
+                </div>
+              </div>
+
+            </div><!-- /accordion -->
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- /SECTION: FAQ -->
+
+    <!-- =========================
+         SECTION: Footer
+       ========================= -->
+    <footer id="footer" class="custom-footer bg-dark py-5 position-relative">
+      <div class="container text-white">
+        <div class="row">
+          <div class="col-md-4 mb-4">
+            <h5 class="text-primary">À propos</h5>
+            <p class="text-muted">ZinPage révolutionne la création de pages produits avec l’intelligence artificielle multilingue, rapide et intuitive.</p>
+          </div>
+          <div class="col-md-4 mb-4">
+            <h5 class="text-primary">Navigation</h5>
+            <ul class="list-unstyled text-muted m-0">
+              <li class="mb-2"><a class="text-white text-decoration-none" href="#hero">Accueil</a></li>
+              <li class="mb-2"><a class="text-white text-decoration-none" href="#services">Fonctionnalités</a></li>
+              <li class="mb-2"><a class="text-white text-decoration-none" href="#plans">Tarifs</a></li>
+              <li class="mb-0"><a class="text-white text-decoration-none" href="#faq">FAQ</a></li>
+            </ul>
+          </div>
+          <div class="col-md-4 mb-4">
+            <h5 class="text-primary">Contact</h5>
+            <p class="text-muted mb-1">
+              <i class="ri-mail-line"></i>
+              <a href="mailto:contact@zinpage.ai" class="text-white text-decoration-none">contact@zinpage.ai</a>
+            </p>
+            <p class="text-muted mb-1"><i class="ri-map-pin-line"></i> Tanger, Maroc</p>
+            <p class="text-muted mb-1">
+              <i class="ri-whatsapp-line"></i>
+              <a href="https://wa.me/212660775111" target="_blank" rel="noopener" class="text-white text-decoration-none">
+                +212 660 775 111
+              </a>
+            </p>
+            <p class="text-muted"><i class="ri-global-line"></i> www.zinpage.ai</p>
+          </div>
+        </div>
+        <hr class="border-secondary"/>
+        <div class="text-center mb-3">
+  <a class="text-white text-decoration-none" href="/legal/privacy.html">Confidentialité</a>
+  &nbsp;•&nbsp;
+  <a class="text-white text-decoration-none" href="/legal/terms.html">CGU</a>
+</div>
+        <div class="text-center text-muted">© 2025 ZinPage. Tous droits réservés.</div>
+      </div>
+    </footer>
+    <!-- /SECTION: Footer -->
+
+    <!-- =========================
+         UI: Back-to-top
+       ========================= -->
+    <button id="back-to-top" class="btn btn-danger btn-icon landing-back-top" onclick="topFunction()">
+      <i class="ri-arrow-up-line"></i>
+    </button>
+
+  </div><!-- /layout-wrapper -->
+
+  <!-- =========================
+       JS libs (inchangés)
+     ========================= -->
+  <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/libs/simplebar/simplebar.min.js"></script>
+  <script src="assets/libs/node-waves/waves.min.js"></script>
+  <script src="assets/libs/feather-icons/feather.min.js"></script>
+  <script src="assets/js/pages/plugins/lord-icon-2.1.0.js"></script>
+  <script src="assets/js/plugins.js"></script>
+  <script src="assets/libs/swiper/swiper-bundle.min.js"></script>
+  <script src="assets/js/pages/landing.init.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <!-- Toastify JS (non bloquant) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+  <!-- =========================
+       Scripts page (inchangés)
+     ========================= -->
+  <script>
+    // AOS
+    AOS.init();
+
+    // --- Lang switch: drapeau + label dynamiques ---
+    (function(){
+      const btn   = document.getElementById('langSwitchBtn');
+      const flagWrap  = document.getElementById('langFlag');
+      const label = document.getElementById('langLabel');
+      const mapLabel = { fr:'FR', ar:'AR', en:'EN' };
+
+      function svgFR(){
+        return '<svg width="20" height="14" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">'
+             + '<rect width="1" height="2" x="0" y="0" fill="#0055A4"/>'
+             + '<rect width="1" height="2" x="1" y="0" fill="#FFFFFF"/>'
+             + '<rect width="1" height="2" x="2" y="0" fill="#EF4135"/></svg>';
+      }
+      function svgMA(){
+        return '<svg width="20" height="14" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg">'
+             + '<rect width="20" height="14" fill="#C1272D"/>'
+             + '<g transform="translate(10,7) scale(1)">' 
+             + '<polygon points="0,-4 1.176,-0.382 -3.236,-2.351 3.236,-2.351 -1.176,-0.382" '
+             + 'fill="none" stroke="#006233" stroke-width="0.8"/></g></svg>';
+      }
+      function svgGB(){
+        return '<svg width="20" height="14" viewBox="0 0 60 42" xmlns="http://www.w3.org/2000/svg">'
+             + '<rect width="60" height="42" fill="#012169"/>'
+             + '<g stroke="#FFF" stroke-width="8"><path d="M0 0 L60 42 M60 0 L0 42"/></g>'
+             + '<g stroke="#C8102E" stroke-width="5"><path d="M0 0 L60 42 M60 0 L0 42"/></g>'
+             + '<rect x="25" width="10" height="42" fill="#FFF"/>'
+             + '<rect y="16" width="60" height="10" fill="#FFF"/>'
+             + '<rect x="27" width="6" height="42" fill="#C8102E"/>'
+             + '<rect y="18" width="60" height="6" fill="#C8102E"/></svg>';
+      }
+      const mapFlagSvg = { fr: svgFR, ar: svgMA, en: svgGB };
+
+      let current = (localStorage.getItem('zinpageLangSelected') || '').toLowerCase();
+      if(!current){
+        const userLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+        if (userLang.startsWith('ar')) current = 'ar';
+        else if (userLang.startsWith('en')) current = 'en';
+        else current = 'fr';
+      }
+
+      if(label) label.textContent = mapLabel[current] || 'FR';
+      if(flagWrap) flagWrap.innerHTML =
+        '<span style="display:inline-flex; width:20px; height:14px; border-radius:2px; overflow:hidden; vertical-align:middle;">'
+        + (mapFlagSvg[current] ? mapFlagSvg[current](): svgFR())
+        + '</span>';
+
+      document.querySelectorAll('.lang-switch .dropdown-item').forEach(item=>{
+        item.addEventListener('click', function(){
+          const lang = this.getAttribute('data-lang');
+          localStorage.setItem('zinpageLangSelected', lang);
+
+          if(label) label.textContent = mapLabel[lang] || 'FR';
+          if(flagWrap) flagWrap.innerHTML =
+            '<span style="display:inline-flex; width:20px; height:14px; border-radius:2px; overflow:hidden; vertical-align:middle;">'
+            + (mapFlagSvg[lang] ? mapFlagSvg[lang](): svgFR())
+            + '</span>';
+
+          if(lang === 'fr') window.location.href = '/';
+          else window.location.href = '/' + lang + '/';
+        });
+      });
+
+      if(btn) btn.setAttribute('aria-label', 'Langue actuelle: ' + (current || 'fr').toUpperCase());
+    })();
+
+    // Back to top
+    function topFunction(){ window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  </script>
+
+ <!-- Effets IA + Scripts utilitaires -->
+<script>
+  // Init AOS
+  AOS.init();
+
+  // --- Lang switch: drapeau + label dynamiques ---
+  (function () {
+    const btn      = document.getElementById('langSwitchBtn');
+    const flagWrap = document.getElementById('langFlag');
+    const label    = document.getElementById('langLabel');
+
+    const mapLabel   = { fr: 'FR', ar: 'AR', en: 'EN' };
+    const mapFlagSvg = {
+      fr: function svgFR() {
+        return '<svg width="20" height="14" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">'
+             + '<rect width="1" height="2" x="0" fill="#0055A4"/>'
+             + '<rect width="1" height="2" x="1" fill="#FFFFFF"/>'
+             + '<rect width="1" height="2" x="2" fill="#EF4135"/></svg>';
+      },
+      ar: function svgMA() {
+        return '<svg width="20" height="14" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg">'
+             + '<rect width="20" height="14" fill="#C1272D"/>'
+             + '<g transform="translate(10,7) scale(1)">'
+             + '<polygon points="0,-4 1.176,-0.382 -3.236,-2.351 3.236,-2.351 -1.176,-0.382" '
+             + 'fill="none" stroke="#006233" stroke-width="0.8"/></g></svg>';
+      },
+      en: function svgGB() {
+        return '<svg width="20" height="14" viewBox="0 0 60 42" xmlns="http://www.w3.org/2000/svg">'
+             + '<rect width="60" height="42" fill="#012169"/>'
+             + '<g stroke="#FFF" stroke-width="8"><path d="M0 0 L60 42 M60 0 L0 42"/></g>'
+             + '<g stroke="#C8102E" stroke-width="5"><path d="M0 0 L60 42 M60 0 L0 42"/></g>'
+             + '<rect x="25" width="10" height="42" fill="#FFF"/>'
+             + '<rect y="16" width="60" height="10" fill="#FFF"/>'
+             + '<rect x="27" width="6" height="42" fill="#C8102E"/>'
+             + '<rect y="18" width="60" height="6" fill="#C8102E"/></svg>';
+      }
+    };
+
+    let current = (localStorage.getItem('zinpageLangSelected') || '').toLowerCase();
+    if (!current) {
+      const userLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+      if (userLang.startsWith('ar')) current = 'ar';
+      else if (userLang.startsWith('en')) current = 'en';
+      else current = 'fr';
+    }
+
+    if (label) label.textContent = mapLabel[current] || 'FR';
+    if (flagWrap) {
+      flagWrap.innerHTML =
+        '<span style="display:inline-flex; width:20px; height:14px; border-radius:2px; overflow:hidden; vertical-align:middle;">'
+        + (mapFlagSvg[current] ? mapFlagSvg[current]() : mapFlagSvg.fr())
+        + '</span>';
+    }
+
+    document.querySelectorAll('.lang-switch .dropdown-item').forEach(item => {
+      item.addEventListener('click', function () {
+        const lang = this.getAttribute('data-lang');
+        localStorage.setItem('zinpageLangSelected', lang);
+
+        if (label) label.textContent = mapLabel[lang] || 'FR';
+        if (flagWrap) {
+          flagWrap.innerHTML =
+            '<span style="display:inline-flex; width:20px; height:14px; border-radius:2px; overflow:hidden; vertical-align:middle;">'
+            + (mapFlagSvg[lang] ? mapFlagSvg[lang]() : mapFlagSvg.fr())
+            + '</span>';
+        }
+
+        if (lang === 'fr') window.location.href = '/';
+        else window.location.href = '/' + lang + '/';
+      });
+    });
+
+    if (btn) btn.setAttribute('aria-label', 'Langue actuelle: ' + (current || 'fr').toUpperCase());
+  })();
+
+  // --- Back to top ---
+  function topFunction() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+
+<!-- Effets IA (Canvas + JS) -->
+<script>
+  // --- Poussière / particules plein écran ---
+  (function () {
+    const canvas = document.getElementById('aiDustFx');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d', { alpha: true });
+
+    let W = 0, H = 0, dpr = 1, stars = [], rafId = null;
+    const CFG = { count: 140, sizeMin: 0.6, sizeMax: 2.0, speedMin: 2, speedMax: 10, glow: 'rgba(0,174,239,1)' };
+
+    function resize() {
+      dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      const rect = canvas.getBoundingClientRect();
+      W = Math.floor(rect.width);
+      H = Math.floor(rect.height);
+      canvas.width = Math.floor(W * dpr);
+      canvas.height = Math.floor(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      init();
+    }
+
+    function rand(a, b) { return a + Math.random() * (b - a); }
+
+    function init() {
+      stars = [];
+      for (let i = 0; i < CFG.count; i++) {
+        stars.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          r: rand(CFG.sizeMin, CFG.sizeMax),
+          vx: rand(-0.2, 0.2),
+          vy: rand(0.15, 0.6),
+          a: rand(0.25, 0.8),
+          pulse: rand(0.002, 0.01),
+          t: Math.random() * Math.PI * 2
+        });
+      }
+    }
+
+    function glowDot(x, y, r, a) {
+      const g = ctx.createRadialGradient(x, y, 0, x, y, r * 3.2);
+      g.addColorStop(0, CFG.glow.replace(/[\d.]+\)$/, '1)'));
+      g.addColorStop(1, CFG.glow.replace(/[\d.]+\)$/, '0)'));
+      ctx.globalAlpha = a;
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    function step() {
+      ctx.clearRect(0, 0, W, H);
+      for (const s of stars) {
+        s.x += s.vx;
+        s.y += s.vy;
+        s.t += s.pulse;
+        const twinkle = 0.5 + 0.5 * Math.sin(s.t);
+        glowDot(s.x, s.y, s.r, s.a * twinkle);
+        if (s.x < -10) s.x = W + 10;
+        if (s.x > W + 10) s.x = -10;
+        if (s.y > H + 10) { s.y = -10; s.x = Math.random() * W; }
+      }
+      rafId = requestAnimationFrame(step);
+    }
+
+    window.addEventListener('resize', () => { cancelAnimationFrame(rafId); resize(); step(); }, { passive: true });
+    resize();
+    step();
+  })();
+
+  // --- Sablier IA (grains) ---
+  (function () {
+    const canvas = document.getElementById('hourglassFx');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d', { alpha: true });
+
+    let W = 0, H = 0, dpr = 1, particles = [], rafId = null;
+    const CFG = {
+      count: 260, sizeMin: 0.6, sizeMax: 1.6, speedMin: 18, speedMax: 42, drift: 8,
+      waistRatio: 0.055, topWidthRatio: 0.62, botWidthRatio: 0.78, topHeight: 0.44, botHeight: 0.44,
+      glowColor: 'rgba(0,174,239,0.85)', waistGlow: 'rgba(0,174,239,0.12)'
+    };
+
+    function resize() {
+      dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      const rect = canvas.getBoundingClientRect();
+      W = Math.floor(rect.width);
+      H = Math.floor(rect.height);
+      canvas.width = Math.floor(W * dpr);
+      canvas.height = Math.floor(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      initParticles();
+    }
+
+    function rand(a, b) { return a + Math.random() * (b - a); }
+    function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function halfWidthAt(y) {
+      const waistY = H * 0.5, topH = H * CFG.topHeight, botH = H * CFG.botHeight;
+      const halfWaist = (W * CFG.waistRatio) / 2, halfTop = (W * CFG.topWidthRatio) / 2, halfBot = (W * CFG.botWidthRatio) / 2;
+      if (y < waistY) {
+        const t = clamp((y - (waistY - topH)) / topH, 0, 1);
+        return lerp(halfWaist, halfTop, t);
+      } else {
+        const t = clamp((y - waistY) / botH, 0, 1);
+        return lerp(halfWaist, halfBot, t);
+      }
+    }
+
+    function spawnParticle(inTop = true) {
+      const waistY = H * 0.5, topYMin = waistY - H * CFG.topHeight, botYMax = waistY + H * CFG.botHeight;
+      const y = inTop ? rand(topYMin, waistY - 2) : rand(waistY + 2, botYMax);
+      const hw = halfWidthAt(y);
+      const x = rand(W / 2 - hw, W / 2 + hw);
+      return {
+        x, y,
+        r: rand(CFG.sizeMin, CFG.sizeMax),
+        vy: rand(CFG.speedMin, CFG.speedMax) / 60,
+        vx: rand(-CFG.drift, CFG.drift) / 60,
+        alpha: rand(0.3, 0.9)
+      };
+    }
+
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < CFG.count; i++) {
+        particles.push(spawnParticle(Math.random() > 0.35));
+      }
+    }
+
+    function drawGlowDot(x, y, r, a) {
+      const g = ctx.createRadialGradient(x, y, 0, x, y, r * 2.4);
+      g.addColorStop(0, CFG.glowColor.replace(/[\d.]+\)$/, '1)'));
+      g.addColorStop(1, CFG.glowColor.replace(/[\d.]+\)$/, '0)'));
+      ctx.globalAlpha = a;
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    function drawWaistHalo() {
+      const cx = W / 2, y = H * 0.5, hw = halfWidthAt(y);
+      ctx.beginPath();
+      ctx.ellipse(cx, y, hw * 0.6, 8, 0, 0, Math.PI * 2);
+      ctx.fillStyle = CFG.waistGlow;
+      ctx.fill();
+    }
+
+    function step() {
+      ctx.clearRect(0, 0, W, H);
+      drawWaistHalo();
+
+      ctx.strokeStyle = 'rgba(0,174,239,0.22)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i < 3; i++) {
+        const cx = W / 2 + (i - 1) * 2;
+        ctx.beginPath();
+        ctx.moveTo(cx, H * 0.5 - 14);
+        ctx.lineTo(cx + (i - 1) * 0.3, H * 0.5 + 16);
+        ctx.stroke();
+      }
+
+      const botLimit = H * (0.5 + CFG.botHeight) - 2;
+      for (let p of particles) {
+        p.y += p.vy;
+        p.x += p.vx * 0.25;
+        const cx = W / 2, hw = halfWidthAt(p.y), minX = cx - hw, maxX = cx + hw;
+        if (p.x < minX) p.x = minX + Math.random() * 0.5;
+        if (p.x > maxX) p.x = maxX - Math.random() * 0.5;
+        drawGlowDot(p.x, p.y, p.r, p.alpha);
+        if (p.y > botLimit) { const np = spawnParticle(true); Object.assign(p, np); }
+      }
+      rafId = requestAnimationFrame(step);
+    }
+
+    window.addEventListener('resize', () => { cancelAnimationFrame(rafId); resize(); step(); }, { passive: true });
+    resize();
+    step();
+  })();
+</script>
+
+<!-- Marquee chiffres clés -->
+<script>
+  (function () {
+    if (typeof Swiper === 'undefined') return;
+    new Swiper('.stats-marquee', {
+      slidesPerView: 'auto',
+      spaceBetween: 22,
+      loop: true,
+      loopAdditionalSlides: 16,
+      speed: 6000,
+      allowTouchMove: false,
+      freeMode: true,
+      freeModeMomentum: false,
+      autoplay: { delay: 0, disableOnInteraction: false, pauseOnMouseEnter: true }
+    });
+  })();
+</script>
+
+</body>
+</html>

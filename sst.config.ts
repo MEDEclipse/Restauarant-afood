@@ -3,13 +3,20 @@
 export default $config({
   app(input) {
     return {
-      name: "restauarant-afood-landingpage",
+      name: "afood-landingpage",
       removal: input?.stage === "production" ? "retain" : "remove",
-      protect: ["production"].includes(input?.stage),
       home: "aws",
     };
   },
   async run() {
-    new sst.aws.Nextjs("MyWeb");
+    new sst.aws.Nextjs("afood-landingpage", {
+      // Optional: customize domain
+      // domain: "afood.ma",
+      // protect: ["production"].includes(input?.stage),
+      // // Optional: environment variables
+      // environment: {
+      //   NEXT_PUBLIC_API_URL: "https://api.example.com"
+      // }
+    });
   },
 });

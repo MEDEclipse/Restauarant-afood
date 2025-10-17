@@ -1,6 +1,7 @@
 // src/app/contact/page.tsx
 
 import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { CopyrightBar } from "@/Components/CopyrightBar";
 
 interface Contact7Props {
   title?: string;
@@ -30,10 +31,10 @@ const Contact = ({
   officeAddress = "Oulfa, Morocco Mall, Areamall",
   phoneLabel = "Phone",
   phoneDescription = "nous sommes disponibles tout les jours et la semaine",
-  phone = "+212600000000",
+  phone = "Tel: 0660600602 / 0520012220 ",
   chatLabel = "Live Chat",
   chatDescription = "communiquez avec notre équipe de support",
-  chatLink = "https://wa.me/212600000000",
+  chatLink = "Tel: 0660600602 / 0520012220 ",
 }: Contact7Props) => {
   return (
     <section className="bg-background p-32 ">
@@ -46,7 +47,7 @@ const Contact = ({
             {description}
           </p>
         </div>
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-1">
           <div className="bg-muted rounded-lg p-6">
             <span className="bg-accent mb-3 flex size-12 flex-col items-center justify-center rounded-full">
               <Mail className="h-6 w-auto" />
@@ -80,16 +81,7 @@ const Contact = ({
               {phone}
             </a>
           </div>
-          <div className="bg-muted rounded-lg p-6">
-            <span className="bg-accent mb-3 flex size-12 flex-col items-center justify-center rounded-full">
-              <MessageCircle className="h-6 w-auto" />
-            </span>
-            <p className="mb-2 text-lg font-semibold">{chatLabel}</p>
-            <p className="text-muted-foreground mb-3">{chatDescription}</p>
-            <a href="#" className="font-semibold hover:underline">
-              {chatLink}
-            </a>
-          </div>
+          
         </div>
       </div>
     </section>
@@ -97,5 +89,8 @@ const Contact = ({
 };
 
 export default function Page() {
-  return <Contact />;
+  return <div>
+    <Contact /> 
+     <CopyrightBar />
+  </div>;
 }

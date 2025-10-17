@@ -21,12 +21,12 @@ const panelItems: PanelItem[] = [
     text: 'COMMANDER MAINTENANT',
   },
   {
-    href: '#about',
+    href: '/about',
     imageUrl: '/3-1-1-afoodmenu.png',
     text: "L'UNIVERS AFOOD",
   },
   {
-    href: '#restaurants',
+    href: '/restaurants',
     imageUrl: '/3-8-afoodmenu.png',
     text: 'NOS RESTAURANTS',
   },
@@ -51,7 +51,7 @@ const InfoCard = ({ href, imageUrl, text }: PanelItem) => {
       {/* Texte + Icone */}
     <div className="absolute inset-0 flex items-end right-0">
       <div className="flex items-center space-x-2">
-        <div className="absolute top-53 right-0 flex items-center rounded-tl-xl bg-black px-4 py-2">
+        <div className="absolute top-53 right-0 flex items-center rounded-tl-sm bg-black px-4 py-2">
             <span
                 className={`${garamond.className} text-lg font-semibold text-white`}
             >
@@ -70,7 +70,7 @@ const InfoCard = ({ href, imageUrl, text }: PanelItem) => {
 // --- Composant Principal ---
 export const SideInfoPanel: React.FC = () => {
   return (
-    <div className="flex h-full w-full flex-col gap-4">
+    <div className="flex h-full w-full flex-col gap-1">
       {panelItems.map((item) => (
         <InfoCard
           key={item.text}

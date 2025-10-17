@@ -11,28 +11,28 @@ import { SideInfoPanel } from './SideInfoPanel';
 
 export const MainHero: React.FC = () => {
   return (
-    <section className="min-h-screen px-10 py-5">
+    <section className="min-h-screen px-5 py-3">
       {/* Grille principale qui divise l'écran en 5 colonnes sur desktop */}
-      <div className="grid h-[calc(100vh-2rem)] grid-cols-1 gap-4 md:grid-cols-5">
+      <div className="grid h-[calc(100vh-2rem)] grid-cols-1 gap-2 md:grid-cols-5">
 
         {/* --- PARTIE GAUCHE (4 colonnes sur 5) --- */}
         <div className="relative col-span-1 overflow-hidden rounded-md md:col-span-4">
           <Image
-            src="/1-9-afoodmenu.png"
-            alt="Table garnie de plats du restaurant AFOOD1-9-afoodmenu"
+            src="/3-8-afoodmenu.png"
+            alt="Table garnie de plats du restaurant AFOOD"
             fill
             className="object-cover"
             priority
           />
           {/* Dégradé pour la lisibilité du texte */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10" />
 
           {/* Contenu superposé */}
-          <div className="relative z-10 flex h-full flex-col justify-between p-8">
+          <div className="relative z-10 flex h-full flex-col justify-between p-1">
             {/* Logo en haut à gauche */}
             <div className="self-start">
               {<Image
-                src="/1-9-afoodmenu.png"
+                src="/logo.png"
                 alt="Logo AFOOD1-9-afoodmenu"
                 width={100}
                 height={100}
@@ -41,15 +41,15 @@ export const MainHero: React.FC = () => {
             
             <div className="flex items-end justify-between">
               {/* Titre en bas à gauche */}
-              <h1
+              {/* <h1
                 className={`${garamond.className} text-4xl font-bold text-white md:text-6xl leading-tight`}
               >
                 CHEZ <br /> RESTAURANT AFOOD
-              </h1>
+              </h1> */}
 
               {/* Icônes sociales (cachées sur mobile) */}
               <div className="hidden items-center gap-2 md:flex">
-                <Link href="#" className="rounded-full border border-white/30 p-2 text-white/70 transition-colors hover:bg-white/10 hover:text-white">
+                <Link href="https://www.instagram.com/restaurant_afood?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" className="rounded-full border border-white/30 p-2 text-white/70 transition-colors hover:bg-white/10 hover:text-white">
                   <Instagram size={18} />
                 </Link>
                 <Link href="#" className="rounded-full border border-white/30 p-2 text-white/70 transition-colors hover:bg-white/10 hover:text-white">
