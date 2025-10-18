@@ -37,7 +37,7 @@ const Contact = ({
   chatLink = "Tel: 0660600602 / 0520012220 ",
 }: Contact7Props) => {
   return (
-    <section className="bg-background p-32 ">
+    <section className="bg-background p-10 lg:p-32 ">
       <div className="container">
         <div className="mb-14">
           <h1 className="mb-3 mt-2 text-balance text-3xl font-semibold md:text-4xl">

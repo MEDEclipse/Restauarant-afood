@@ -52,7 +52,7 @@ const Restaurants = () => {
     },
   ];
   return (
-    <section className="p-32">
+    <section className="p-0 lg:p-32">
       <div className="container">
         <Tabs defaultValue={features[0].id} className="p-1">
           <TabsList className="bg-background flex h-auto w-full flex-col gap-2 p-0 md:flex-row">

@@ -21,7 +21,7 @@ export function NavbarComponent({ children }: { children: React.ReactNode }) {
     },
     {
       name: "Menu",
-      link: "/",
+      link: "https://d2tvomu9ndhyfk.cloudfront.net"
     },
     {
       name: "Nos restaurants",
@@ -78,19 +78,13 @@ export function NavbarComponent({ children }: { children: React.ReactNode }) {
               </a>
             ))}
             <div className="flex w-full flex-col gap-4">
+              
               <NavbarButton
                 onClick={() => setIsMobileMenuOpen(false)}
                 variant="primary"
                 className="w-full"
               >
-                contactez-nous
-              </NavbarButton>
-              <NavbarButton
-                onClick={() => setIsMobileMenuOpen(false)}
-                variant="primary"
-                className="w-full"
-              >
-                Commander maintenant
+                <Link href={"https://d2tvomu9ndhyfk.cloudfront.net"}>Commander maintenant</Link>
               </NavbarButton>
             </div>
           </MobileNavMenu>

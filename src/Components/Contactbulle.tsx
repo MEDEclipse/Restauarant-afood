@@ -13,9 +13,9 @@ export function ContactBubbles() {
   const [isOpen, setIsOpen] = useState(false);
 
   // Remplacez par vos numéros de téléphone
-  const phoneNumber = "+212600000000"; // Format international
+  const phoneNumber = "+0660600602"; // Format international
   const whatsappLink = `https://wa.me/${phoneNumber.replace('+', '')}`;
-  const cartLink = "https://d2tvomu9ndhyfk.cloudfront.net/";
+  const cartLink = "https://d2tvomu9ndhyfk.cloudfront.net";
 
   const bubbles = [
     {
